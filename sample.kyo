@@ -1,0 +1,12 @@
+env {
+
+  @schema {
+
+  }
+
+  hello = "111"
+
+  staging {
+    hello = "123"
+  }
+}

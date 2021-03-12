@@ -1,0 +1,17 @@
+{
+  "name": "kyoml",
+  "version": "0.0.1",
+  "description": "A pluggable dynamic markup language",
+  "main": "index.js",
+  "scripts": {
+    "pegjs": "pegjs grammar.pegjs",
+    "test": "npm run pegjs && ava --verbose",
+    "test:fast": "npm run pegjs && ava --verbose --fail-fast"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "ava": "^3.15.0",
+    "pegjs": "^0.10.0"
+  }
+}
