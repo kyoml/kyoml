@@ -5,7 +5,8 @@ Start = BlockContent
 // -------------------------
 
 Key = chars:([a-zA-Z][a-zA-Z0-9_]*) {
-  return chars.flat().join('')
+  if (chars.length === 1) return chars[0]
+  return chars[0] + chars[1].join('')
 }
 
 _  = [ \t\n\r]*  
