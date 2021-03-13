@@ -1,3 +1,6 @@
-!grammar.js
 *.pegjs
 specs
+
+!dist
+**/*.ts
+.github

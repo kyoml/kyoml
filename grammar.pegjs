@@ -22,7 +22,7 @@ d = [0-9]
 Block = "{" _ content:BlockContent? _ "}" eol {
   return {
     type: 'Block',
-    value: content
+    value: content || []
   }
 }
 
@@ -130,7 +130,7 @@ Number = chars:[0-9.]+ {
   }
 
   return {
-    type: 'Number',
+    type: 'Numeric',
     value: Number(chars.join(''))
   }
 }

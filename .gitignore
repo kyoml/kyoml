@@ -1,4 +1,7 @@
 grammar.js
+./index.js
+lib/*.js
+dist
 
 # Logs
 logs

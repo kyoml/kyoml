@@ -13,10 +13,10 @@ it('supports arrays', (t) => {
       value: [
         { type: 'ComplexString', value: 'hello' },
         { type: 'RawString', value: 'hello' },
-        { type: 'Number', value: 123 },
+        { type: 'Numeric', value: 123 },
         { type: 'Boolean', value: true },
         { type: 'Array', value: [ { type: 'Boolean', value: false } ] },
-        { type: 'Map', value: [ { key: 'a', type: 'Number', value: 1 } ] }
+        { type: 'Map', value: [ { key: 'a', type: 'Numeric', value: 1 } ] }
       ]
     }])
 });
@@ -38,10 +38,10 @@ it('supports multi-line arrays', (t) => {
       value: [
         { type: 'ComplexString', value: 'hello' },
         { type: 'RawString', value: 'hello' },
-        { type: 'Number', value: 123 },
+        { type: 'Numeric', value: 123 },
         { type: 'Boolean', value: true },
         { type: 'Array', value: [ { type: 'Boolean', value: false } ] },
-        { type: 'Map', value: [ { key: 'a', type: 'Number', value: 1 } ] }
+        { type: 'Map', value: [ { key: 'a', type: 'Numeric', value: 1 } ] }
       ]
     }])
 });

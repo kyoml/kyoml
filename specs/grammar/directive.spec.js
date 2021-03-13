@@ -47,10 +47,10 @@ it('allows directives with arguments', (t) => {
       args: [
         { type: 'ComplexString',  value: 'hello' },
         { type: 'Boolean',        value: true },
-        { type: 'Number',         value: 123 },
+        { type: 'Numeric',         value: 123 },
         { 
           type: 'Array', value: [{
-            type: 'Map', value: [{ key: 'a', type: 'Number', value: 1 }]
+            type: 'Map', value: [{ key: 'a', type: 'Numeric', value: 1 }]
           }] 
         }
       ]
@@ -152,7 +152,7 @@ it('allows left-piping values into directives', (t) => {
         },
         directives: [
           { key: 'func', args: [], type: 'Directive' },
-          { key: 'func2', args: [{type: 'Number', value: 1}], type: 'Directive' }
+          { key: 'func2', args: [{type: 'Numeric', value: 1}], type: 'Directive' }
         ]
       }
     }
@@ -178,13 +178,13 @@ it('allows multi-line left-piping values into directives', (t) => {
         raw: {
           type: 'Map',
           value: [
-            { key: 'a', type: 'Number', value: 1 },
-            { key: 'b', type: 'Number', value: 2 }
+            { key: 'a', type: 'Numeric', value: 1 },
+            { key: 'b', type: 'Numeric', value: 2 }
           ]
         },
         directives: [
           { key: 'func', args: [], type: 'Directive' },
-          { key: 'func2', args: [{type: 'Number', value: 1}], type: 'Directive' }
+          { key: 'func2', args: [{type: 'Numeric', value: 1}], type: 'Directive' }
         ]
       }
     }

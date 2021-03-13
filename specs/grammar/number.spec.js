@@ -8,7 +8,7 @@ it('supports integers', (t) => {
 
   t.is(Array.isArray(obj), true);
   t.deepEqual(obj, [
-    { key: 'num', type: 'Number', value: 123 }
+    { key: 'num', type: 'Numeric', value: 123 }
   ])
 })
 
@@ -20,30 +20,30 @@ it('supports floating points', (t) => {
 
   t.is(Array.isArray(obj), true);
   t.deepEqual(obj, [
-    { key: 'num', type: 'Number', value: 0.1 },
-    { key: 'num2', type: 'Number', value: 1923.123 },
+    { key: 'num', type: 'Numeric', value: 0.1 },
+    { key: 'num2', type: 'Numeric', value: 1923.123 },
   ])
 })
 
 
-it('supports number without whole number', (t) => {
+it('supports Numericwithout whole Numeric', (t) => {
   const obj = parse(`
     num = .1
   `)
 
   t.is(Array.isArray(obj), true);
   t.deepEqual(obj, [
-    { key: 'num', type: 'Number', value: 0.1 }
+    { key: 'num', type: 'Numeric', value: 0.1 }
   ])
 })
 
-it('doesnt supports commas in whole number', (t) => {
+it('doesnt supports commas in whole Numeric', (t) => {
   t.throws(() => parse(`
     num = 1923,1311.1230
   `))
 })
 
-it('rejects invalid numbers', (t) => {
+it('rejects invalid Numeric', (t) => {
   t.throws(() => parse(`
     num = 19231.311.1230
   `))
