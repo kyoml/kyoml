@@ -3,7 +3,7 @@ const { dump }  = require('../utils')
 const { parse } = require('../../grammar');
 
 
-it('returns an object at the root', (t) => {
+it('allows key/value pairs at the root', (t) => {
   const obj = parse(`
     key1 = 'value1'
     key2 = 'value2'
@@ -14,6 +14,14 @@ it('returns an object at the root', (t) => {
     { key: 'key1', type: 'RawString', value: 'value1' },
     { key: 'key2', type: 'RawString', value: 'value2' }
   ])
+})
+
+it('key value pairs must end with a line break', (t) => {
+  t.throws(() => {
+    parse(`
+      key1 = 'value1' key2 = 'value2'
+    `)
+  });
 })
 
 it('supports subblocks', (t) => {
@@ -35,3 +43,12 @@ it('supports subblocks', (t) => {
     }
   ])
 })
+
+it('subblocks must end with a line break', (t) => {
+  t.throws(() => parse(`  
+    subblock {
+      nestedkey = 'nestedvalue'
+    } key = 'value'
+  `));
+})
+

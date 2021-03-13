@@ -25,22 +25,28 @@ it('supports floating points', (t) => {
   ])
 })
 
-it('supports commas in whole number', (t) => {
+
+it('supports number without whole number', (t) => {
   const obj = parse(`
-    num = 1923,1311.1230
+    num = .1
   `)
 
   t.is(Array.isArray(obj), true);
   t.deepEqual(obj, [
-    { key: 'num', type: 'Number', value: 19231311.123 },
+    { key: 'num', type: 'Number', value: 0.1 }
   ])
 })
 
-it('rejects commas in fraction', (t) => {
-  t.throws(() =>{
-    parse(`
-      num = 1.123,121
-    `)
-  });
+it('doesnt supports commas in whole number', (t) => {
+  t.throws(() => parse(`
+    num = 1923,1311.1230
+  `))
 })
+
+it('rejects invalid numbers', (t) => {
+  t.throws(() => parse(`
+    num = 19231.311.1230
+  `))
+})
+
 

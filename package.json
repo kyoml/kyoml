@@ -4,6 +4,7 @@
   "description": "A pluggable dynamic markup language",
   "main": "index.js",
   "scripts": {
+    "prepublish": "npm run pegjs",
     "pegjs": "pegjs grammar.pegjs",
     "test": "npm run pegjs && ava --verbose",
     "test:fast": "npm run pegjs && ava --verbose --fail-fast"

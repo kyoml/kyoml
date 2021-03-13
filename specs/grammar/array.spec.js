@@ -21,6 +21,31 @@ it('supports arrays', (t) => {
     }])
 });
 
+it('supports multi-line arrays', (t) => {
+  const obj = parse(`
+    a = [
+      "hello",
+      'hello',
+      123, true,
+      [false],
+      { "a": 1 }
+    ]
+  `)
+
+  t.deepEqual(obj, [{
+      key: 'a',
+      type: 'Array',
+      value: [
+        { type: 'ComplexString', value: 'hello' },
+        { type: 'RawString', value: 'hello' },
+        { type: 'Number', value: 123 },
+        { type: 'Boolean', value: true },
+        { type: 'Array', value: [ { type: 'Boolean', value: false } ] },
+        { type: 'Map', value: [ { key: 'a', type: 'Number', value: 1 } ] }
+      ]
+    }])
+});
+
 it('supports empty arrays', (t) => {
   const obj = parse(`
     a = []
@@ -33,3 +58,9 @@ it('supports empty arrays', (t) => {
   }])
 });
 
+it('requires commas between values', (t) => {
+  t.throws(() => parse(`
+    a = [1 2 3]
+  `))
+
+});
