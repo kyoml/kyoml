@@ -14,9 +14,9 @@ Key = chars:([a-zA-Z][a-zA-Z0-9_]*) {
   return chars[0] + chars[1].join('')
 }
 
-_  = [ \t\n\r]*
+_  = (Comment / [ \t\n\r])*
 
-eol = [ \t\r]* ","? [ \t\r]* [\n]
+eol = [ \t\r]* ","? ([ \t\r]* Comment / [ \t\r]* [\n])
 
 d = [0-9]
 
@@ -38,6 +38,8 @@ BlockContent = _ first:(Directive / BlockKeyValue / SubBlock) [,]? rest:BlockCon
 SubBlock = _ key:Key _ value:Block { return { key, ...value } }
 
 BlockKeyValue = _ key:Key _ "=" _ value:Value eol { return { key, ...value } }
+
+Comment = "#" comment:([^\n]*) [\n]
 
 // -------------------------
 // Directives
