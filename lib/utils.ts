@@ -6,13 +6,15 @@ import {
   Numeric,
   Directive,
   Bool,
-  Json,
+  PipedValue,
   List,
   Map,
   PegNode
 } from "./types";
 
 export type AnyFunction = (...args: any[]) => any
+
+type Unpacked<T> = T extends (infer U)[] ? U : T;
 
 export interface Dictionary<T> {
   [key: string]: T
@@ -50,15 +52,37 @@ export function isMap(val: PegNode) : val is Map {
   return val.type === 'Map'
 }
 
+export function isPipedValue(val: PegNode) : val is PipedValue {
+  return val.type === 'PipedValue'
+}
+
 export function isComplexString(val: PegNode) : val is ComplexString {
   return val.type === 'ComplexString';
 }
 
+export function pipe(value: any, funcs: AnyFunction[]) {
+  if (funcs.length === 0) return value;
+
+  for (const fn of funcs) {
+    value = fn(value);
+  }
+
+  return value;
+}
+
 export class Ref {
-  constructor(public base: Json, public key: string|number) {}
+  constructor(public base: any, public key: string|number) {}
 
   replace(tranformer: (v: any) => any) {
     this.base[this.key] = tranformer(this.base[this.key]);
+  }
+
+  static map<I extends any[], O>(iterable: I, cb : (v: Unpacked<I>, ref: Ref) => O) : Array<O> {
+    const out : Array<O> = []
+    for (const idx in iterable) {
+      out[idx] = cb(iterable[idx], new Ref(out, idx))
+    }
+    return out;
   }
 }
 

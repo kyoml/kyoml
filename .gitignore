@@ -3,6 +3,8 @@ grammar.js
 lib/*.js
 dist
 
+.vscode/settings.json
+
 # Logs
 logs
 *.log

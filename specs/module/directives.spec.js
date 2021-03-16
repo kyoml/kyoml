@@ -145,6 +145,28 @@ it('directives in sub-blocks are processed first', (t) => {
   })
 })
 
+it('doest not allow directives in maps', (t) => {
+  t.throws(() => parse(`
+    @test()
+    "nested" = {
+      @test()
+
+      "a": 2
+    }    
+  `, {
+    directives: {
+      test: (v) => v
+    }
+  }))
+})
+
+it('throws if directive have not been provided', (t) => {
+  t.throws(() => parse(`
+    block {
+      @unknownDirective()
+    }    
+  `));
+})
 
 
 

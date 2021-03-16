@@ -7,8 +7,8 @@ export type JsonValue = (
   Array<JsonValue>
 )
 
-export interface Json {
-  [key: string]: any
+export interface Json<T = JsonValue> {
+  [key: string]: JsonValue
 }
 
 export interface PegNode {
@@ -49,6 +49,13 @@ export interface List extends Value<Array<Value>> {
 
 export interface Map extends Value<KeyValue[]> {
   type: 'Map'
+}
+
+export interface PipedValue extends Value<{
+  directives: Directive[],
+  raw: Value
+}> {
+  type: 'PipedValue'
 }
 
 export interface Directive {

@@ -23,8 +23,21 @@ it('supports floating points', (t) => {
   ])
 })
 
+it('supports negative numbers', (t) => {
+  const obj = parse(`
+    num = -0.1
+    num2 = -1923.1230
+    num3 = -2
+  `)
 
-it('supports Numericwithout whole Numeric', (t) => {
+  t.deepEqual(obj.value, [
+    { key: 'num', type: 'Numeric', value: -0.1 },
+    { key: 'num2', type: 'Numeric', value: -1923.123 },
+    { key: 'num3', type: 'Numeric', value: -2 },
+  ])
+})
+
+it('supports Numerics without whole Numeric', (t) => {
   const obj = parse(`
     num = .1
   `)

@@ -74,7 +74,7 @@ it('allows right-piping values into a directive', (t) => {
     value: [
       {
         key: 'key',
-        type: 'ComputedValue',
+        type: 'PipedValue',
         value: {
           raw: {
             type: 'ComplexString',
@@ -97,7 +97,7 @@ it('allows right-piping values into multiple directives', (t) => {
     value: [
       {
         key: 'key',
-        type: 'ComputedValue',
+        type: 'PipedValue',
         value: {
           raw: {
             type: 'ComplexString',
@@ -130,7 +130,7 @@ it('allows multi-line piping', (t) => {
     value: [
       {
         key: 'key',
-        type: 'ComputedValue',
+        type: 'PipedValue',
         value: {
           raw: {
             type: 'Array',
@@ -161,7 +161,7 @@ it('allows left-piping values into directives', (t) => {
     value: [
       {
         key: 'key',
-        type: 'ComputedValue',
+        type: 'PipedValue',
         value: {
           raw: {
             type: 'ComplexString',
@@ -193,7 +193,7 @@ it('allows multi-line left-piping values into directives', (t) => {
     value: [
       {
         key: 'key',
-        type: 'ComputedValue',
+        type: 'PipedValue',
         value: {
           raw: {
             type: 'Map',

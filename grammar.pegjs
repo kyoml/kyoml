@@ -63,12 +63,12 @@ LeftPipedDirectives =
 // Value definition
 // -------------------------
 
-Value =  ComputedValue / RawValue
+Value =  PipedValue / RawValue
 
-ComputedValue =
+PipedValue =
   raw:RawValue _ "|>" _ directives:RightPipedDirectives {
     return {
-      type: 'ComputedValue',
+      type: 'PipedValue',
       value: {
         raw: raw,
         directives: directives
@@ -77,7 +77,7 @@ ComputedValue =
   } /
   directives:LeftPipedDirectives _ "<|" _ raw:RawValue {
     return {
-      type: 'ComputedValue',
+      type: 'PipedValue',
       value: {
         raw: raw,
         directives: directives
@@ -126,7 +126,7 @@ MapKeyVal = _ key:String _ ":" _ value:Value {
 
 /* ------ Number ------ */
 
-Number = chars:[0-9.]+ {
+Number = chars:[-0-9.]+ {
   const str = chars.join('');
   const n = Number(str)
   

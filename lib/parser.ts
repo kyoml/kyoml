@@ -1,7 +1,7 @@
 import { parse as peg } from '../grammar'
 import { ComputableString } from './strings'
-import { AnyFunction, AssemblyLine, isBlock, isComplexString, isDirective, isList, isMap, isValue, Ref } from './utils'
-import { Block, ComplexString, Directive, Json, JsonValue, List, Map, PegNode, Value } from "./types"
+import { AnyFunction, AssemblyLine, isBlock, isComplexString, isPipedValue, isDirective, isList, isMap, isValue, Ref, pipe } from './utils'
+import { Block, ComplexString, Directive, Json, List, Map, PegNode, Value, PipedValue } from "./types"
 
 export interface ParserOptions {
   interpolate: boolean
@@ -46,11 +46,6 @@ export class Parser extends AssemblyLine {
 
   /**
    * Main entry point
-   *
-   * @template T
-   * @param {string} txt KyoML string
-   * @returns {T}
-   * @memberof Parser
    */
   public parse<T extends Json = Json>(txt : string) : T {
     this.reset();
@@ -59,7 +54,7 @@ export class Parser extends AssemblyLine {
 
     this.process('interpolation', this.interpolationSources);
     this.process('directives', this.json);
-  
+
     return this.json as T;
   }
 
@@ -67,7 +62,11 @@ export class Parser extends AssemblyLine {
     this.root = { out: {} }
   }
 
+  /**
+   * Given a PegNode, returns a JS primitive
+   */
   private normalize(node : PegNode, ref: Ref) : any {
+    if (isPipedValue(node))    return this.normalizePipes(node, ref);
     if (isBlock(node))         return this.normalizeBlock(node, ref);
     if (isMap(node))           return this.normalizeMap(node, ref);
     if (isComplexString(node)) return this.normalizeComplexString(node, ref);
@@ -77,7 +76,28 @@ export class Parser extends AssemblyLine {
     throw new Error(`Cannot normalize PegNode ${node}`)
   }
 
-  private normalizeBlock(block: Block|Map, ref: Ref) : Json {
+  /**
+   * 
+   * Returns a normalized value, and queues up directives for post-processing
+   */
+  private normalizePipes(pv: PipedValue, ref: Ref) : any {
+    const val = this.normalize(pv.value.raw, ref);
+
+    this.queue('directives', () => {
+      const apply = this.compileDirectives(...pv.value.directives);
+      ref.replace(val => apply(val))
+    });
+
+    return val;
+  }
+
+  /**
+   *
+   * Transforms a Block node into a normal JSON object
+   * Directives at the root are applied
+   * 
+   */
+  private normalizeBlock(block: Block, ref: Ref) : Json {
     const directives : Directive[] = [];
     const obj : Json = {};
 
@@ -99,35 +119,23 @@ export class Parser extends AssemblyLine {
     return obj;
   }
 
-  private normalizeMap(block: Block|Map, ref: Ref) : Json {
+  /** Transforms a Map node into a normal JSON object **/
+  private normalizeMap(block: Map, ref: Ref) : Json {
     return block.value.reduce((obj, kv) => {
       obj[kv.key] = this.normalize(kv, new Ref(obj, kv.key));
       return obj;
     }, {});
   }
 
+  /** Schedules a directive to be processed after the rest of the object has been normalized **/
   private queueDirective(dir: Directive, ref: Ref) : void {
-    const func = this.opts.directives[dir.key];
-
-    if (typeof func !== 'function') throw new Error(`Unknown directive ${dir.key}`);
-
     this.queue('directives', () => {
-      let args : any[] = []
-
-      dir.args.forEach((arg, idx) => {
-        let val = this.normalize(arg, new Ref(arg, idx));
-        if (val instanceof ComputableString) {
-          val = val.compute(this.interpolationSources)
-        }
-        args[idx] = val;
-      })
-
-      ref.replace(val => {
-        return func(val, ...args)
-      })
+      const apply = this.compileDirectives(dir);
+      ref.replace(val => apply(val))
     });
   }
 
+  /** Transforms a list node into a JS array, and normalizes each of its elements **/
   private normalizeList(val: List) : Array<any> {
     const out = [] as any[];
 
@@ -138,10 +146,12 @@ export class Parser extends AssemblyLine {
     return out;
   }
 
+  /** Uses the node's value directly without any transformation **/
   private bypassNormalize(val: Value) : any {
     return val.value;
   }
 
+  /** Transforms a ComplexString node into a ComputableString, and schedules it's processing **/
   private normalizeComplexString(val: ComplexString, ref: Ref) : ComputableString|string {
     if (!this.opts.interpolate) {
       return val.value;
@@ -152,5 +162,30 @@ export class Parser extends AssemblyLine {
     });
 
     return new ComputableString(val.value);
+  }
+
+  /** Transforms a series of directives into a single callable function **/
+  private compileDirectives(...dirs: Directive[]) : AnyFunction {
+    if (dirs.length === 1) {
+      const [dir] = dirs;
+
+      const func = this.opts.directives[dir.key];
+
+      if (typeof func !== 'function') throw new Error(`Unknown directive ${dir.key}`);
+
+      let args = Ref.map(dir.args, (arg, ref) => {
+        let val = this.normalize(arg, ref);
+        return val instanceof ComputableString ? val.compute(this.interpolationSources) : val
+      });
+
+      return (input: any) => func(input, ...args);
+    }
+
+    if (dirs.length > 1) {
+      const funcs = dirs.map(dir => this.compileDirectives(dir));
+      return (input: any) => pipe(input, funcs)
+    }
+
+    return (input: any) => input;
   }
 }
