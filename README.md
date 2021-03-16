@@ -5,7 +5,7 @@ A dynamic markup language with support for directives and plugins
 [![codecov](https://codecov.io/gh/kyoml/kyoml/branch/main/graph/badge.svg?token=MLZAZ3W7BK)](https://codecov.io/gh/kyoml/kyoml)
 [![Specs](https://github.com/kyoml/kyoml/actions/workflows/specs.yml/badge.svg)](https://github.com/kyoml/kyoml/actions/workflows/specs.yml)
 
-<img src="./resources/preview_carbon.png" width="500">
+<img src="https://github.com/kyoml/kyoml/blob/main/resources/preview_carbon.png?raw=true" width="600">
 
 ## Basic usage
 
