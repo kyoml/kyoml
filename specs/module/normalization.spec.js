@@ -1,5 +1,5 @@
 const it        = require('ava');
-const { parse } = require('../../dist/index');
+const { parse } = require('../../index');
 
 it('adds subblocks as a nested object', (t) => {
   const obj = parse(`

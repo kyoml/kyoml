@@ -1,5 +1,5 @@
 const it        = require('ava');
-const { parse } = require('../../dist/index');
+const { parse } = require('../../index');
 
 it('only interpolates complex string', (t) => {
   const obj = parse(`

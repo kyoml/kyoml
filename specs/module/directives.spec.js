@@ -1,5 +1,5 @@
 const it        = require('ava');
-const { parse } = require('../../dist/index');
+const { parse } = require('../../index');
 
 it('applies root directives to entire the block', (t) => {
   let arg = null;

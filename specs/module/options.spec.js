@@ -1,5 +1,5 @@
 const it        = require('ava');
-const { parse } = require('../../dist/index');
+const { parse } = require('../../index');
 
 it('disables string interpolation with interpolate=false', (t) => {
   const obj = parse(`

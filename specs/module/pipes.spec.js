@@ -1,5 +1,5 @@
 const it        = require('ava');
-const { parse } = require('../../dist/index');
+const { parse } = require('../../index');
 
 it('values can be right-piped into directives', (t) => {
   const obj = parse(`
