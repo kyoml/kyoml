@@ -26,3 +26,4 @@ jobs:
     - run: npm ci
     - run: npm run test:coverage
     - run: npm run codecov -- --token="${{secrets.CODECOV_TOKEN}}"
+      if: matrix.os == 'ubuntu-latest' && matrix.node-version == '14.x' # Only upload coverage once
