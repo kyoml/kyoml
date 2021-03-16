@@ -11,8 +11,11 @@ export interface Json {
   [key: string]: any
 }
 
-export interface Value<T = unknown> {
+export interface PegNode {
   type:   string
+}
+
+export interface Value<T = unknown> extends PegNode {
   value:  T
 }
 
@@ -42,4 +45,14 @@ export interface Bool extends Value<boolean> {
 
 export interface List extends Value<Array<Value>> {
   type: 'Array'
+}
+
+export interface Map extends Value<KeyValue[]> {
+  type: 'Map'
+}
+
+export interface Directive {
+  type: 'Directive'
+  key: string
+  args: KeyValue<any>[]
 }

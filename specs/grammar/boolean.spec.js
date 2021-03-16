@@ -7,8 +7,8 @@ it('allows true', (t) => {
     a = true
   `)
 
-  t.is(Array.isArray(obj), true);
-  t.deepEqual(obj, [
+
+  t.deepEqual(obj.value, [
     { key: 'a', type: 'Boolean', value: true }
   ])
 })
@@ -18,8 +18,8 @@ it('allows false', (t) => {
     a = false
   `)
 
-  t.is(Array.isArray(obj), true);
-  t.deepEqual(obj, [
+
+  t.deepEqual(obj.value, [
     { key: 'a', type: 'Boolean', value: false }
   ])
 })
@@ -29,8 +29,8 @@ it('allows yes', (t) => {
     a = yes
   `)
 
-  t.is(Array.isArray(obj), true);
-  t.deepEqual(obj, [
+
+  t.deepEqual(obj.value, [
     { key: 'a', type: 'Boolean', value: true }
   ])
 })
@@ -40,8 +40,8 @@ it('allows no', (t) => {
     a = no
   `)
 
-  t.is(Array.isArray(obj), true);
-  t.deepEqual(obj, [
+
+  t.deepEqual(obj.value, [
     { key: 'a', type: 'Boolean', value: false }
   ])
 })

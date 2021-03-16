@@ -61,5 +61,25 @@ it('normalizes arrays', (t) => {
   })
 })
 
+it('normalizes objects', (t) => {
+  const obj = parse(`
+    a = {
+      "hello": "world",
+      "foo": {
+        "value": ["bar"]
+      }
+    }
+  `)
+
+  t.deepEqual(obj, {
+    a: {
+      hello: 'world',
+      foo: {
+        value: ['bar']
+      }
+    }
+  })
+})
+
 
 

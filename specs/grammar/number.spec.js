@@ -6,8 +6,7 @@ it('supports integers', (t) => {
     num = 123
   `)
 
-  t.is(Array.isArray(obj), true);
-  t.deepEqual(obj, [
+  t.deepEqual(obj.value, [
     { key: 'num', type: 'Numeric', value: 123 }
   ])
 })
@@ -18,8 +17,7 @@ it('supports floating points', (t) => {
     num2 = 1923.1230
   `)
 
-  t.is(Array.isArray(obj), true);
-  t.deepEqual(obj, [
+  t.deepEqual(obj.value, [
     { key: 'num', type: 'Numeric', value: 0.1 },
     { key: 'num2', type: 'Numeric', value: 1923.123 },
   ])
@@ -31,8 +29,7 @@ it('supports Numericwithout whole Numeric', (t) => {
     num = .1
   `)
 
-  t.is(Array.isArray(obj), true);
-  t.deepEqual(obj, [
+  t.deepEqual(obj.value, [
     { key: 'num', type: 'Numeric', value: 0.1 }
   ])
 })

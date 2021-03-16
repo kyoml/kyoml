@@ -9,8 +9,8 @@ it('allows key/value pairs at the root', (t) => {
     key2 = 'value2'
   `)
 
-  t.is(Array.isArray(obj), true);
-  t.deepEqual(obj, [
+
+  t.deepEqual(obj.value, [
     { key: 'key1', type: 'RawString', value: 'value1' },
     { key: 'key2', type: 'RawString', value: 'value2' }
   ])
@@ -33,8 +33,8 @@ it('supports subblocks', (t) => {
     }
   `)
 
-  t.is(Array.isArray(obj), true);
-  t.deepEqual(obj, [
+
+  t.deepEqual(obj.value, [
     { key: 'key', type: 'RawString', value: 'value' },
     {
       key: 'subblock',

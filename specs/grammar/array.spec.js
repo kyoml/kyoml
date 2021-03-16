@@ -7,7 +7,7 @@ it('supports arrays', (t) => {
     a = ["hello", 'hello', 123, true, [false], { "a": 1 }]
   `)
 
-  t.deepEqual(obj, [{
+  t.deepEqual(obj.value, [{
       key: 'a',
       type: 'Array',
       value: [
@@ -32,7 +32,7 @@ it('supports multi-line arrays', (t) => {
     ]
   `)
 
-  t.deepEqual(obj, [{
+  t.deepEqual(obj.value, [{
       key: 'a',
       type: 'Array',
       value: [
@@ -51,7 +51,7 @@ it('supports empty arrays', (t) => {
     a = []
   `)
 
-  t.deepEqual(obj, [{
+  t.deepEqual(obj.value, [{
     key: 'a',
     type: 'Array',
     value: []

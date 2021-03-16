@@ -9,7 +9,7 @@ it('supports maps', (t) => {
     }
   `)
 
-  t.deepEqual(obj, [
+  t.deepEqual(obj.value, [
     {
       key: 'key',
       type: 'Map',
@@ -30,7 +30,7 @@ it('allows single quoted strings', (t) => {
     }
   `)
 
-  t.deepEqual(obj, [
+  t.deepEqual(obj.value, [
     {
       key: 'key',
       type: 'Map',
@@ -48,7 +48,7 @@ it('allows empty maps', (t) => {
     key = {}
   `)
 
-  t.deepEqual(obj, [
+  t.deepEqual(obj.value, [
     {
       key: 'key',
       type: 'Map',
@@ -66,21 +66,24 @@ it('allows sub-maps as values', (t) => {
     }
   `)
 
-  t.deepEqual(obj, [
-    {
-      key: 'obj',
-      type: 'Map',
-      value: [{
-        key: 'nested',
+  t.deepEqual(obj, {
+    type:'Block',
+    value: [
+      {
+        key: 'obj',
         type: 'Map',
         value: [{
-          key: 'foo',
-          type: 'ComplexString',
-          value: 'bar'
+          key: 'nested',
+          type: 'Map',
+          value: [{
+            key: 'foo',
+            type: 'ComplexString',
+            value: 'bar'
+          }]
         }]
-      }]
-    }
-  ])
+      }
+    ]
+  })
 });
 
 it('requires a comma separator', (t) => {

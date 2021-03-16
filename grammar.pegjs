@@ -1,4 +1,9 @@
-Start = BlockContent
+Start = body:BlockContent {
+  return {
+    type: 'Block',
+    value: body || []
+  }
+}
 
 // -------------------------
 // Generic
@@ -71,12 +76,12 @@ ComputedValue =
     }
   } /
   directives:LeftPipedDirectives _ "<|" _ raw:RawValue {
-  return {
-    type: 'ComputedValue',
-    value: {
-      raw: raw,
-      directives: directives
-    }
+    return {
+      type: 'ComputedValue',
+      value: {
+        raw: raw,
+        directives: directives
+      }
   }
 }
 

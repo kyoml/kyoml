@@ -7,8 +7,7 @@ it('supports single quoted strings', (t) => {
     key2 = 'value2'
   `)
 
-  t.is(Array.isArray(obj), true);
-  t.deepEqual(obj, [
+  t.deepEqual(obj.value, [
     { key: 'key1', type: 'RawString', value: 'value1' },
     { key: 'key2', type: 'RawString', value: 'value2' }
   ])
@@ -20,9 +19,11 @@ it('supports double quoted strings', (t) => {
     key2 = "value2"
   `)
 
-  t.is(Array.isArray(obj), true);
-  t.deepEqual(obj, [
-    { key: 'key1', type: 'ComplexString', value: 'value1' },
-    { key: 'key2', type: 'ComplexString', value: 'value2' }
-  ])
+  t.deepEqual(obj, {
+    type: 'Block',
+    value: [
+      { key: 'key1', type: 'ComplexString', value: 'value1' },
+      { key: 'key2', type: 'ComplexString', value: 'value2' }
+    ]
+  })
 })

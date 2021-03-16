@@ -62,3 +62,22 @@ it('interpolation can fetch array keys by index', (t) => {
     secondElement: 'bar'
   })
 })
+
+it('interpolation is supported in directive arguments', (t) => {
+  const obj = parse(`
+    @test("\${a} \${b}")
+
+    a = 'hello'
+    b = 'world'
+  `, {
+    directives: {
+      test: (v, str) => ({ ...v, c: str})
+    }
+  })
+
+  t.deepEqual(obj, {
+    a: 'hello',
+    b: 'world',
+    c: 'hello world'
+  })
+})
