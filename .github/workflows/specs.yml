@@ -25,5 +25,5 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - run: npm ci --also=dev
     - run: npm run test:coverage
-    - run: npm run codecov -- --token="${{secrets.CODECOV_TOKEN}}"
+    - run: npx --yes codecov --token="${{secrets.CODECOV_TOKEN}}"
       if: matrix.node-version == '14.x' # Only upload coverage once
