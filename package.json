@@ -8,10 +8,11 @@
     "pegjs": "pegjs grammar.pegjs",
     "pretest": "npm run pegjs",
     "test": "ava --verbose",
+    "test:coverage": "nyc npm run test",
     "build": "tsc",
     "prebuild": "npm run pegjs",
     "postbuild": "cp ./grammar.js ./dist",
-    "nyc": "nyc npm run test"
+    "codecov": "codecov"
   },
   "author": "",
   "license": "ISC",
@@ -28,10 +29,12 @@
       ".ts"
     ],
     "include": [
+      "index.ts",
       "lib/**/*.ts"
     ],
     "reporter": [
-      "html"
+      "html",
+      "lcov"
     ],
     "all": true
   },
