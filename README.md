@@ -67,7 +67,7 @@ Output:
 {
   "key1": "value1",
   "key2": "value2",
-  "block" {
+  "block": {
     "KEY3": [1,2,3]
   }
 }
@@ -105,7 +105,7 @@ Output:
 {
   "foo_key1": "value1",
   "foo_key2": "value2",
-  "foo_block" {
+  "foo_block": {
     "key3": [1,2,3]
   }
 }
