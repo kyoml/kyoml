@@ -1,8 +1,8 @@
 import { Parser, ParserOptions } from "./lib/parser";
-import { Json } from "./lib/types"
+import { Json }                  from "./lib/types"
 
-export function parse<T extends Json = Json>(text: string, opts : Partial<ParserOptions> = {}) : T {
+export function compile<T extends Json = Json>(text: string, opts : Partial<ParserOptions> = {}) : T {
   return new Parser(opts).parse(text);
 }
 
-export default parse;
+export default compile;
