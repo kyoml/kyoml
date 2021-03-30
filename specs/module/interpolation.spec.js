@@ -71,7 +71,9 @@ it('interpolation is supported in directive arguments', (t) => {
     b = 'world'
   `, {
     directives: {
-      test: (v, str) => ({ ...v, c: str})
+      test: ({ value, set }, str) => {
+        set({ ...value, c: str})
+      }
     }
   })
 

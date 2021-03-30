@@ -1,6 +1,6 @@
 {
   "name": "kyoml",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A pluggable dynamic markup language",
   "main": "dist/index.js",
   "scripts": {
@@ -17,6 +17,7 @@
   "author": "",
   "license": "ISC",
   "ava": {
+    "failFast": true,
     "extensions": [
       "js"
     ],

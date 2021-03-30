@@ -1,7 +1,7 @@
 const it        = require('ava');
 const { parse } = require('../../index');
 
-it('applies root directives to entire the block', (t) => {
+it('receives a node object as first argument', (t) => {
   let arg = null;
 
   const obj = parse(`
@@ -20,10 +20,15 @@ it('applies root directives to entire the block', (t) => {
     b: 'bar'
   })
 
-  t.is(arg, obj)
+  t.is(typeof arg.root, 'object')
+  t.is(typeof arg.path, 'string')
+  t.is(typeof arg.base, 'object')
+  t.is(typeof arg.key,  'string')
 })
 
-it('returns a modified version of the block', (t) => {
+it('applies root directives to entire the block', (t) => {
+  let arg = null;
+
   const obj = parse(`
     @test()
 
@@ -31,6 +36,51 @@ it('returns a modified version of the block', (t) => {
     b = 'bar'
   `, {
     directives: {
+      test: ({ value }) => arg = value
+    }
+  })
+
+  t.deepEqual(obj, {
+    a: 'foo',
+    b: 'bar'
+  })
+
+  t.is(arg, obj)
+})
+
+it('applies root mappers to entire the block', (t) => {
+  let arg = null;
+
+  const obj = parse(`
+    @test()
+
+    a = 'foo'
+    b = 'bar'
+  `, {
+    mappers: {
+      test: (v) => {
+        arg = v;
+        return v;
+      }
+    }
+  })
+
+  t.deepEqual(obj, {
+    a: 'foo',
+    b: 'bar'
+  })
+
+  t.is(arg, obj)
+})
+
+it('mappers return an alternatve value for the block', (t) => {
+  const obj = parse(`
+    @test()
+
+    a = 'foo'
+    b = 'bar'
+  `, {
+    mappers: {
       test: (v) => ({ ...v, c: 'hello' })
     }
   })
@@ -50,6 +100,25 @@ it('supports directive arguments', (t) => {
     b = 'bar'
   `, {
     directives: {
+      test: ({ value, set }, str) => (set({ ...value, c: str}))
+    }
+  })
+
+  t.deepEqual(obj, {
+    a: 'foo',
+    b: 'bar',
+    c: 'hello'
+  })
+})
+
+it('supports mappers arguments', (t) => {
+  const obj = parse(`
+    @test("hello")
+
+    a = 'foo'
+    b = 'bar'
+  `, {
+    mappers: {
       test: (v, str) => ({ ...v, c: str})
     }
   })
@@ -73,7 +142,7 @@ it('calls the directives in order of appearance', (t) => {
     b = 'bar'
     c = []
   `, {
-    directives: {
+    mappers: {
       test: (v, n) => ({
         ...v,
         c: [...v.c, n]
@@ -103,10 +172,10 @@ it('supports directives in sub-blocks', (t) => {
     
   `, {
     directives: {
-      test: (v, s) => ({
-        ...v,
+      test: ({ value, set }, s) => (set({
+        ...value,
         foo: s
-      })
+      }))
     }
   })
 
@@ -129,7 +198,7 @@ it('directives in sub-blocks are processed first', (t) => {
       @test()
     }    
   `, {
-    directives: {
+    mappers: {
       test: (v) => ({
         ...v,
         foo: ++i

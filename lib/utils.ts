@@ -14,8 +14,6 @@ import {
 
 export type AnyFunction = (...args: any[]) => any
 
-type Unpacked<T> = T extends (infer U)[] ? U : T;
-
 export interface Dictionary<T> {
   [key: string]: T
 }
@@ -68,22 +66,6 @@ export function pipe(value: any, funcs: AnyFunction[]) {
   }
 
   return value;
-}
-
-export class Ref {
-  constructor(public base: any, public key: string|number) {}
-
-  replace(tranformer: (v: any) => any) {
-    this.base[this.key] = tranformer(this.base[this.key]);
-  }
-
-  static map<I extends any[], O>(iterable: I, cb : (v: Unpacked<I>, ref: Ref) => O) : Array<O> {
-    const out : Array<O> = []
-    for (const idx in iterable) {
-      out[idx] = cb(iterable[idx], new Ref(out, idx))
-    }
-    return out;
-  }
 }
 
 export class AssemblyLine {
