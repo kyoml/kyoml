@@ -238,6 +238,18 @@ it('throws if directive have not been provided', (t) => {
 })
 
 
+it('throws if a directive and mapper key conflicts', (t) => {
+  t.throws(() => parse(`
+    block {
+      @hello()
+    }    
+  `, {
+    directives: { hello() {} },
+    mappers: { hello() { 1 } }
+  }));
+})
+
+
 
 
 

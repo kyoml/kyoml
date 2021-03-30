@@ -1,4 +1,4 @@
-type Unpacked<T> = T extends (infer U)[] ? U : T;
+import get from 'lodash.get'
 
 export class Node {
   constructor(
@@ -36,6 +36,10 @@ export class Node {
       path: this.path,
       base: this.base,
       key:  this.key,
+
+      get(path: string) {
+        return get(self.base, path)
+      },
 
       get value() {
         return self.base[self.key];

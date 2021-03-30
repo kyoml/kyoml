@@ -1,8 +1,17 @@
-import { parse as peg }                                                                                                 from '../grammar'
-import { ComputableString }                                                                                             from './strings'
-import { AnyFunction, AssemblyLine, isBlock, isComplexString, isPipedValue, isDirective, isList, isMap, isValue, pipe } from './utils'
-import { Block, ComplexString, Directive, Json, List, Map, PegNode, Value, PipedValue }                                 from "./types"
-import { Node }                                                                                                         from './tree'
+import { Block, ComplexString, Directive, Json, List, Map, PegNode, Value, PipedValue }   from "./types"
+import { ComputableString }                                                               from './strings'
+import { parse as peg }                                                                   from '../grammar'
+import { Node }                                                                           from './tree'
+import {
+  AnyFunction,
+  AssemblyLine,
+  isBlock,
+  isComplexString,
+  isPipedValue,
+  isDirective,
+  isList, isMap,
+  isValue, pipe
+} from './utils'
 
 export interface ParserOptions {
   interpolate: boolean
@@ -30,14 +39,15 @@ export class Parser extends AssemblyLine {
     this.opts = {
       ...DEFAULT_OPTS,
       ...opts,
-      directives: { ...opts.directives }
+      directives: { ...opts.directives },
+      mappers: void 0
     };
 
     const { mappers = {} } = opts;
 
     Object.keys(mappers || {}).forEach(mkey => {
       if (this.opts.directives[mkey]) {
-        throw new Error(`Directives and mapper cannot share the same key (${mkey})`);
+        throw new Error(`Directives and mappers cannot share the same key (${mkey})`);
       }
 
       const mapper = mappers[mkey];
