@@ -1,6 +1,6 @@
 {
   "name": "kyoml",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "A pluggable dynamic markup language",
   "main": "dist/index.js",
   "scripts": {
@@ -10,9 +10,10 @@
     "test": "ava --verbose",
     "test:coverage": "nyc npm run test",
     "build": "tsc",
-    "prebuild": "npm run pegjs",
+    "prebuild": "npm run pegjs && npm run lint",
     "postbuild": "cp ./grammar.js ./dist",
-    "codecov": "codecov"
+    "codecov": "codecov",
+    "lint": "eslint . --ext .ts"
   },
   "author": "",
   "license": "ISC",
@@ -41,7 +42,10 @@
   },
   "devDependencies": {
     "@types/node": "^14.14.34",
+    "@typescript-eslint/eslint-plugin": "^4.20.0",
+    "@typescript-eslint/parser": "^4.20.0",
     "ava": "^3.15.0",
+    "eslint": "^7.23.0",
     "nyc": "^15.1.0",
     "pegjs": "^0.10.0",
     "ts-node": "^9.1.1",

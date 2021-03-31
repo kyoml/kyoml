@@ -4,13 +4,9 @@ import get      from 'lodash.get'
 export class ComputableString {
   constructor(private str: string) {}
 
-  public raw() : string {
-    return this.str;
-  }
-
   public compute(sources: Json[], stack : string[] = []) : string {
     const rexp = /(?:\${)(.+?)}/g
-    const keys = (this.str.match(rexp) || []).map(match => match.replace(/[\${}]/g, ''));
+    const keys = (this.str.match(rexp) || []).map(match => match.replace(/[${}]/g, ''));
 
     return keys.reduce((s, k) => {
       if (stack.indexOf(k) >= 0) {

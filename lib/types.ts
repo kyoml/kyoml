@@ -8,7 +8,7 @@ export type JsonValue = (
 )
 
 export interface Json<T = JsonValue> {
-  [key: string]: JsonValue
+  [key: string]: T
 }
 
 export interface PegNode {
