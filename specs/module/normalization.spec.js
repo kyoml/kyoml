@@ -1,8 +1,8 @@
-const it        = require('ava');
-const { parse } = require('../../index');
+const it          = require('ava');
+const { compile } = require('../../index');
 
 it('adds subblocks as a nested object', (t) => {
-  const obj = parse(`
+  const obj = compile(`
     sublock {}
   `)
 
@@ -12,7 +12,7 @@ it('adds subblocks as a nested object', (t) => {
 })
 
 it('normalizes strings', (t) => {
-  const obj = parse(`
+  const obj = compile(`
     a = 'foo'
     b = "bar"
   `)
@@ -24,7 +24,7 @@ it('normalizes strings', (t) => {
 })
 
 it('normalizes numbers', (t) => {
-  const obj = parse(`
+  const obj = compile(`
     a = 987
     b = 111.980
   `)
@@ -36,7 +36,7 @@ it('normalizes numbers', (t) => {
 })
 
 it('normalizes booleans', (t) => {
-  const obj = parse(`
+  const obj = compile(`
     a = yes
     b = true
     c = no
@@ -52,7 +52,7 @@ it('normalizes booleans', (t) => {
 })
 
 it('normalizes arrays', (t) => {
-  const obj = parse(`
+  const obj = compile(`
     a = [1, "hello", yes]
   `)
 
@@ -62,7 +62,7 @@ it('normalizes arrays', (t) => {
 })
 
 it('normalizes objects', (t) => {
-  const obj = parse(`
+  const obj = compile(`
     a = {
       "hello": "world",
       "foo": {

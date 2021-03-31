@@ -1,8 +1,8 @@
 const it        = require('ava');
-const { parse } = require('../../index');
+const { compile } = require('../../index');
 
 it('only interpolates complex string', (t) => {
-  const obj = parse(`
+  const obj = compile(`
     a = 'foo'
     b = '\${a}'
     c = "\${a}"
@@ -16,7 +16,7 @@ it('only interpolates complex string', (t) => {
 })
 
 it('supports multi-level interpolation', (t) => {
-  const obj = parse(`
+  const obj = compile(`
     a = 'foo'
     b = "foo \${a}"
     c = "\${b} foo \${b}"
@@ -30,7 +30,7 @@ it('supports multi-level interpolation', (t) => {
 })
 
 it('detects circular interpolation', (t) => {
-  const e = t.throws(() => parse(`
+  const e = t.throws(() => compile(`
     a = 'foo'
     b = "\${c}"
     c = "foo \${b}"
@@ -40,7 +40,7 @@ it('detects circular interpolation', (t) => {
 })
 
 it('interpolates strings in arrays', (t) => {
-  const obj = parse(`
+  const obj = compile(`
     a = 'foo'
     b = ["\${a}"]
   `)
@@ -52,7 +52,7 @@ it('interpolates strings in arrays', (t) => {
 })
 
 it('interpolation can fetch array keys by index', (t) => {
-  const obj = parse(`
+  const obj = compile(`
     a = ['foo', 'bar']
     secondElement = "\${a[1]}"
   `)
@@ -64,7 +64,7 @@ it('interpolation can fetch array keys by index', (t) => {
 })
 
 it('interpolation is supported in directive arguments', (t) => {
-  const obj = parse(`
+  const obj = compile(`
     @test("\${a} \${b}")
 
     a = 'hello'

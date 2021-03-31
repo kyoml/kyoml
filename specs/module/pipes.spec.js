@@ -1,8 +1,8 @@
-const it        = require('ava');
-const { parse } = require('../../index');
+const it          = require('ava');
+const { compile } = require('../../index');
 
 it('values can be right-piped into directives', (t) => {
-  const obj = parse(`
+  const obj = compile(`
     a = 4 |> @double
   `, {
     directives: {
@@ -18,7 +18,7 @@ it('values can be right-piped into directives', (t) => {
 })
 
 it('values can be right-piped into mappers', (t) => {
-  const obj = parse(`
+  const obj = compile(`
     a = 4 |> @double
   `, {
     mappers: {
@@ -32,7 +32,7 @@ it('values can be right-piped into mappers', (t) => {
 })
 
 it('values can be left-piped into directives', (t) => {
-  const obj = parse(`
+  const obj = compile(`
     a = @double <| 4
   `, {
     directives: {
@@ -48,7 +48,7 @@ it('values can be left-piped into directives', (t) => {
 })
 
 it('values can be left-piped into mappers', (t) => {
-  const obj = parse(`
+  const obj = compile(`
     a = @double <| 4
   `, {
     mappers: {
@@ -62,7 +62,7 @@ it('values can be left-piped into mappers', (t) => {
 })
 
 it('values can be right-piped into directives with arguments', (t) => {
-  const obj = parse(`
+  const obj = compile(`
     a = 4 |> @mul(2, 3)
   `, {
     directives: {
@@ -78,7 +78,7 @@ it('values can be right-piped into directives with arguments', (t) => {
 })
 
 it('values can be right-piped into mappers with arguments', (t) => {
-  const obj = parse(`
+  const obj = compile(`
     a = 4 |> @mul(2, 3)
   `, {
     mappers: {
@@ -92,7 +92,7 @@ it('values can be right-piped into mappers with arguments', (t) => {
 })
 
 it('values can be left-piped into directives with arguments', (t) => {
-  const obj = parse(`
+  const obj = compile(`
     a = @mul(2, 3) <| 4
   `, {
     directives: {
@@ -108,7 +108,7 @@ it('values can be left-piped into directives with arguments', (t) => {
 })
 
 it('values can be left-piped into mappers with arguments', (t) => {
-  const obj = parse(`
+  const obj = compile(`
     a = @mul(2, 3) <| 4
   `, {
     mappers: {
@@ -122,7 +122,7 @@ it('values can be left-piped into mappers with arguments', (t) => {
 })
 
 it('values can be right-piped into multiple directives', (t) => {
-  const obj = parse(`
+  const obj = compile(`
     a = 4 |> @double |> @add(1)
   `, {
     directives: {
@@ -137,7 +137,7 @@ it('values can be right-piped into multiple directives', (t) => {
 })
 
 it('values can be right-piped into multiple mappers', (t) => {
-  const obj = parse(`
+  const obj = compile(`
     a = 4 |> @double |> @add(1)
   `, {
     mappers: {
@@ -152,7 +152,7 @@ it('values can be right-piped into multiple mappers', (t) => {
 })
 
 it('values can be left-piped into multiple directives', (t) => {
-  const obj = parse(`
+  const obj = compile(`
     a = @add(1) <| @double <| 4
   `, {
     directives: {
@@ -167,7 +167,7 @@ it('values can be left-piped into multiple directives', (t) => {
 })
 
 it('values can be left-piped into multiple mappers', (t) => {
-  const obj = parse(`
+  const obj = compile(`
     a = @add(1) <| @double <| 4
   `, {
     mappers: {
@@ -182,7 +182,7 @@ it('values can be left-piped into multiple mappers', (t) => {
 })
 
 it('complex pipes example', (t) => {
-  const obj = parse(`
+  const obj = compile(`
     @extend
 
     a = [@extend <| { "num": @double <| @max <| [2,1,-1,0.1] }]
@@ -204,7 +204,7 @@ it('complex pipes example', (t) => {
 })
 
 it('prevents piping in both directions on the same value', (t) => {
-  t.throws(() => parse(`
+  t.throws(() => compile(`
     a = @double <| 4 |> @double
   `, {
     mappers: {
