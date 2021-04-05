@@ -45,21 +45,38 @@ export function isComplexString(val: PegNode) : val is ComplexString {
 
 export function pipe(value: any, funcs: AnyFunction[] = []) {
   for (const fn of funcs) {
-    value = fn(value);
+    if (isPromise(value)) {
+      value = value.then(fn);
+    } else {
+      value = fn(value);
+    }
   }
 
   return value;
 }
 
+export function isPromise(val: any) : val is Promise<any> {
+  return (typeof val?.then === 'function');
+}
+
 export class AssemblyLine {
   private tasks : Dictionary<AnyFunction[]> = {}
 
-  process(step : string, ...args: any[]) {
+  public processSync(step : string, ...args: any[]) {
     const jobs = this.tasks[step] || [];
 
     while (jobs.length > 0) {
       const job = <AnyFunction>jobs.shift();
-      job(...args)
+      job(...args);
+    }
+  }
+
+  public async processAsync(step : string, ...args: any[]) {
+    const jobs = this.tasks[step] || [];
+
+    while (jobs.length > 0) {
+      const job = <AnyFunction>jobs.shift();
+      await job(...args);
     }
   }
 

@@ -10,7 +10,7 @@ import {
   isPipedValue,
   isDirective,
   isList, isMap,
-  isValue, pipe
+  isValue, pipe, isPromise
 } from './utils'
 
 
@@ -19,6 +19,7 @@ import {
 // ------------------------------------
 
 export interface CompilerConfig {
+  async: boolean
   interpolate: boolean
   directives: { [key: string]: AnyFunction }
 }
@@ -27,12 +28,17 @@ export interface CompilerOptions extends CompilerConfig {
   mappers: { [key: string]: AnyFunction }
 }
 
+type Result<T, C> = C extends { async: true } ? Promise<T> : T
+
 // ------------------------------------
 // Config normalization
 // ------------------------------------
 
-export function prepareConfig(opts: Partial<CompilerOptions>) : CompilerConfig {
+const asyncPanic = (name: string) => { throw new Error(`Async directive ${name} used outside of async mode`) }
+
+function prepareConfig(opts: Partial<CompilerOptions>) : CompilerConfig {
   const config : CompilerConfig = {
+    async: opts.async ?? false,
     interpolate: opts.interpolate ?? true,
     directives: { ...opts.directives }
   }
@@ -46,7 +52,16 @@ export function prepareConfig(opts: Partial<CompilerOptions>) : CompilerConfig {
 
     const mapper = mappers[mkey];
     config.directives[mkey] = ({ value, set }, ...args: any[]) => {
-      set(mapper(value, ...args));
+      const res = mapper(value, ...args);
+
+      if (isPromise(res)) {
+        if (!config.async) asyncPanic(mkey)
+        return res.then(v => {
+          set(v);
+        })
+      } else {
+        set(res);
+      }
     }
   })
 
@@ -66,8 +81,11 @@ export function prepareConfig(opts: Partial<CompilerOptions>) : CompilerConfig {
  * @param {Partial<CompilerOptions>} opts compilation options
  * @returns {T} a javascript object
  */
-export function compile<T extends Json = Json>(txt: string, opts: Partial<CompilerOptions> = {}) : T {
-  const config    = prepareConfig(opts);
+export function compile<T extends Json, C extends Partial<CompilerOptions>>(
+  txt: string,
+  opts?: C
+) : Result<T, C> {
+  const config    = prepareConfig(opts || {});
   const assembler = new AssemblyLine();
 
   const root : { document: Json } = { document: {} }
@@ -75,6 +93,18 @@ export function compile<T extends Json = Json>(txt: string, opts: Partial<Compil
   const tree = new Node(root, 'document', root, 'document');
 
   const getInterpolationSources = () => [root.document]
+
+  const maybeWaitFor = (name: string, maybePromise: any, ret: any) : any => {
+    if (!isPromise(maybePromise)) {
+      return ret;
+    }
+
+    if (!config.async) {
+      asyncPanic(name);
+    }
+
+    return maybePromise.then(() => ret);
+  }
 
   /**
    * Given a PegNode, returns a JS primitive
@@ -96,10 +126,7 @@ export function compile<T extends Json = Json>(txt: string, opts: Partial<Compil
   const normalizePipes = (pv: PipedValue, ref: Node) : any => {
     const val = normalize(pv.value.raw, ref);
 
-    assembler.queue('directives', () => {
-      const apply = compileDirectives(ref, ...pv.value.directives);
-      apply(ref.serialize())
-    });
+    queueDirective(ref, ...pv.value.directives)
 
     return val;
   }
@@ -125,7 +152,7 @@ export function compile<T extends Json = Json>(txt: string, opts: Partial<Compil
     // We queue the directives after the object is normalized
     // to ensure sub-blocks and subdirectives are processed first
     //
-    directives.forEach(dir => queueDirective(dir, ref));
+    directives.forEach(dir => queueDirective(ref, dir));
 
     return obj;
   }
@@ -139,10 +166,10 @@ export function compile<T extends Json = Json>(txt: string, opts: Partial<Compil
   }
 
   /** Shedules a directive to be applied to a node after the first rendering pass */
-  const queueDirective = (dir: Directive, ref: Node) : void => {
+  const queueDirective = (ref: Node, ...dirs: Directive[]) : void => {
     assembler.queue('directives', () => {
-      const apply = compileDirectives(ref, dir);
-      apply(ref.serialize());
+      const apply = compileDirectives(ref, ...dirs);
+      return apply(ref.serialize());
     });
   }
 
@@ -193,9 +220,9 @@ export function compile<T extends Json = Json>(txt: string, opts: Partial<Compil
       }
 
       return (input: any) => {
-        func(input, ...args);
-        return input;
-      };
+        const res = func(input, ...args);
+        return maybeWaitFor(dir.key, res, input);
+      }
     }
 
     if (dirs.length > 1) {
@@ -212,8 +239,19 @@ export function compile<T extends Json = Json>(txt: string, opts: Partial<Compil
 
   // Apply post-processing
 
-  assembler.process('interpolation', getInterpolationSources());
-  assembler.process('directives', root.document);
+  if (config.async) {
+    return (
+      assembler.processAsync('interpolation', getInterpolationSources())
+        .then(() => {
+          return assembler.processAsync('directives', root.document);
+        })
+        .then(() => root.document)
+    ) as Result<T, C>
+  }
 
-  return root.document as T
+  assembler.processSync('interpolation', getInterpolationSources());
+  assembler.processSync('directives', root.document);
+
+  return root.document as Result<T, C>
 }
+

@@ -1,6 +1,6 @@
 {
   "name": "kyoml",
-  "version": "0.0.5",
+  "version": "0.1.0",
   "description": "A pluggable dynamic markup language",
   "main": "dist/index.js",
   "scripts": {
@@ -45,6 +45,7 @@
     "@typescript-eslint/eslint-plugin": "^4.20.0",
     "@typescript-eslint/parser": "^4.20.0",
     "ava": "^3.15.0",
+    "axios": "^0.21.1",
     "eslint": "^7.23.0",
     "nyc": "^15.1.0",
     "pegjs": "^0.10.0",

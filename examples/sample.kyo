@@ -1,0 +1,14 @@
+
+
+table     = "users"
+emails    = "https://jsonplaceholder.typicode.com/${table}" |> @fetch |> @mapBy('email')
+
+config {
+  @schema({
+    "lang": 'string',
+    "extension": 'string'
+  })
+
+  lang      = 'kyoml'
+  extension = ".${config.lang}"
+}
