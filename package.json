@@ -1,6 +1,6 @@
 {
   "name": "kyoml",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A pluggable dynamic markup language",
   "main": "dist/index.js",
   "scripts": {
@@ -53,6 +53,7 @@
     "typescript": "^4.2.3"
   },
   "dependencies": {
+    "backslash": "^0.2.0",
     "lodash.get": "^4.4.2"
   }
 }

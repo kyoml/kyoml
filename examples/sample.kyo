@@ -12,3 +12,8 @@ config {
   lang      = 'kyoml'
   extension = ".${config.lang}"
 }
+
+stringTests {
+  multiLine = "hello\nWorld"
+  unicode = '\'enchant\u00E9\''
+}

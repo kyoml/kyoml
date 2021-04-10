@@ -34,4 +34,5 @@ const axios     = require('axios');
   );
 
   console.log(json);
+  console.log(json.stringTests.multiLine)
 })();

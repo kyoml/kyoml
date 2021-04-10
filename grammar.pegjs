@@ -1,3 +1,7 @@
+{
+  const backslash = require('backslash');
+}
+
 Start = body:BlockContent {
   return {
     type: 'Block',
@@ -128,19 +132,28 @@ MapKeyVal = _ key:String _ ":" _ value:Value {
 
 /* ------ Number ------ */
 
-Number = chars:[-0-9.]+ {
-  const str = chars.join('');
-  const n = Number(str)
+Number = sign:([-+]?) _ chars:(Number16 / Number8 / Number2 / Number10) {
+  const n = Number(chars)
+  const mul = (sign && sign === '-') ? -1 : 1;
   
   if (isNaN(n)) {
-    throw new SyntaxError(`Invalid number ${str}`)
+    throw new SyntaxError(`Invalid number ${chars}`)
   }
 
   return {
     type: 'Numeric',
-    value: Number(chars.join(''))
+    value: mul * n
   }
 }
+
+BasicNumber = chars:([0-9.]+) { return chars.join('') }
+
+Number10 = left:BasicNumber right:([Ee] [-+]? BasicNumber)? {
+  return left + (right || []).join('')
+}
+Number16 = "0x" chars:([0-9a-f]i+) { return '0x' + chars.join('') }
+Number8 = "0o" chars:([0-7]+) { return '0o' + chars.join('') }
+Number2 = "0b" chars:([01]+) { return '0b' + chars.join('') }
 
 /* ------ Booleans ------ */
 
@@ -155,17 +168,17 @@ Boolean = value:("true" / "false" / "yes" / "no") {
 
 String = RawString / ComplexString
 
-RawString = ['] string:[^']* ['] {
+RawString = ['] string:("\\'" / [^'\n])* ['] {
   return {
     type:   "RawString",
-    value:  string.join('')
+    value:  backslash(string.join(''))
   }
 }
 
-ComplexString = ["] string:[^"]* ["] {
+ComplexString = ["] string:('\\"' / [^"\n])* ["] {
   return {
     type:   "ComplexString",
-    value:  string.join('')
+    value:  backslash(string.join(''))
   }
 }
 
