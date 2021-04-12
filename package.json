@@ -1,8 +1,9 @@
 {
   "name": "kyoml",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "A pluggable dynamic markup language",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "prepublish": "npm run build",
     "pegjs": "pegjs grammar.pegjs",
