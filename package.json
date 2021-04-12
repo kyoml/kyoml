@@ -1,6 +1,6 @@
 {
   "name": "kyoml",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "A pluggable dynamic markup language",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -16,8 +16,12 @@
     "codecov": "codecov",
     "lint": "eslint . --ext .ts"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "patrixr",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:kyoml/kyoml.git"
+  },
+  "license": "MIT",
   "ava": {
     "failFast": true,
     "extensions": [
