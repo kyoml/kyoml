@@ -58,8 +58,6 @@ export function resolvePlugins(config: CompilerConfig) : Plugin {
     mappers: {}
   }
 
-  console.log(plugins)
-
   for (const plugin of plugins) {
     strictExtend(composite.directives, plugin.directives);
     strictExtend(composite.mappers, plugin.mappers);
