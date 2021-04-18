@@ -63,3 +63,5 @@ export class Node {
     }
   }
 }
+
+export type SerializedNode = ReturnType<typeof Node.prototype.serialize>

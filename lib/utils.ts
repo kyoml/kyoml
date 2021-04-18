@@ -59,6 +59,27 @@ export function isPromise(val: any) : val is Promise<any> {
   return (typeof val?.then === 'function');
 }
 
+export function strictExtend<T extends Record<string, any>>(left: T, right: T) : T {
+  for (const key in right) {
+    if (left[key]) {
+      throw new Error(`Name conflict detected: ${key} already defined`);
+    }
+    left[key] = right[key];
+  }
+  return left;
+}
+
+export function once<T extends AnyFunction>(fn: T) : T {
+  const res : any = {};
+
+  return ((...args: any[]) => {
+    if (!Object.prototype.hasOwnProperty.call(res, 'result')) {
+      res.result = fn(...args);
+    }
+    return res.result;
+  }) as T
+}
+
 export class AssemblyLine {
   private tasks : Dictionary<AnyFunction[]> = {}
 

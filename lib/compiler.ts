@@ -1,7 +1,8 @@
-import { Block, ComplexString, Directive, Json, List, Map, PegNode, Value, PipedValue }   from "./types"
-import { ComputableString }                                                               from './strings'
-import { parse as peg }                                                                   from '../grammar'
-import { Node }                                                                           from './tree'
+import { Block, ComplexString, Directive, Json, List, Map, PegNode, Value, PipedValue }                from "./types"
+import { ComputableString }                                                                            from './strings'
+import { parse as peg }                                                                                from '../grammar'
+import { Node, SerializedNode }                                                                        from './tree'
+import { resolvePlugins, Plugin }                                                                      from './plugins'
 import {
   AnyFunction,
   AssemblyLine,
@@ -10,18 +11,20 @@ import {
   isPipedValue,
   isDirective,
   isList, isMap,
-  isValue, pipe, isPromise
+  isValue, pipe, isPromise, strictExtend
 } from './utils'
-
 
 // ------------------------------------
 // Compiler Types
 // ------------------------------------
 
+export type DirectiveFunc = (node: SerializedNode, ...args: any[]) => any
+
 export interface CompilerConfig {
   async: boolean
   interpolate: boolean
-  directives: { [key: string]: AnyFunction }
+  directives: { [key: string]: DirectiveFunc }
+  plugins: boolean|Plugin[]
 }
 
 export interface CompilerOptions extends CompilerConfig {
@@ -36,33 +39,41 @@ type Result<T, C> = C extends { async: true } ? Promise<T> : T
 
 const asyncPanic = (name: string) => { throw new Error(`Async directive ${name} used outside of async mode`) }
 
+function mapperToDirective(name: string, mapper: AnyFunction, config: CompilerConfig) {
+  return ({ value, set }, ...args: any[]) => {
+    const res = mapper(value, ...args);
+
+    if (isPromise(res)) {
+      if (!config.async) asyncPanic(name)
+      return res.then(v => {
+        set(v);
+      })
+    } else {
+      set(res);
+    }
+  }
+}
+
 function prepareConfig(opts: Partial<CompilerOptions>) : CompilerConfig {
   const config : CompilerConfig = {
     async: opts.async ?? false,
     interpolate: opts.interpolate ?? true,
-    directives: { ...opts.directives }
+    directives: { ...opts.directives },
+    plugins: opts.plugins ?? true
   }
 
   const { mappers = {} } = opts;
+
+  const plugin = resolvePlugins(config);
+
+  strictExtend(mappers, plugin.mappers);
+  strictExtend(config.directives, plugin.directives);
 
   Object.keys(mappers || {}).forEach(mkey => {
     if (config.directives[mkey]) {
       throw new Error(`Directives and mappers cannot share the same key (${mkey})`);
     }
-
-    const mapper = mappers[mkey];
-    config.directives[mkey] = ({ value, set }, ...args: any[]) => {
-      const res = mapper(value, ...args);
-
-      if (isPromise(res)) {
-        if (!config.async) asyncPanic(mkey)
-        return res.then(v => {
-          set(v);
-        })
-      } else {
-        set(res);
-      }
-    }
+    config.directives[mkey] = mapperToDirective(mkey, mappers[mkey], config);
   })
 
   return config;
