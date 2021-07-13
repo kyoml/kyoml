@@ -1,11 +1,12 @@
 # KyoML
 
-A dynamic markup language with support for directives and plugins
+A dynamic markup language with support for directives and plugins. More details on [kyoml.com](https://kyoml.com)
 
 [![codecov](https://codecov.io/gh/kyoml/kyoml/branch/main/graph/badge.svg?token=MLZAZ3W7BK)](https://codecov.io/gh/kyoml/kyoml)
 [![Specs](https://github.com/kyoml/kyoml/actions/workflows/specs.yml/badge.svg)](https://github.com/kyoml/kyoml/actions/workflows/specs.yml)
 
-<img src="https://github.com/kyoml/kyoml/blob/main/resources/preview_carbon.png?raw=true" width="600">
+
+<img src="https://github.com/kyoml/kyoml/blob/main/resources/preview_vscode.png?raw=true" width="600">
 
 ## Basic usage
 
