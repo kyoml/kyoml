@@ -202,6 +202,6 @@ block {
 - [x] Blocks
 - [x] Directives
 - [x] Pipes
-- [ ] VSCode syntax hightlighting
+- [x] VSCode syntax hightlighting
 - [ ] Playground
 - [ ] CLI converter
