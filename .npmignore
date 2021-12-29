@@ -2,5 +2,6 @@
 specs
 
 !dist
-**/*.ts
+lib
+spec
 .github
