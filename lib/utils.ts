@@ -80,34 +80,51 @@ export function once<T extends AnyFunction>(fn: T) : T {
   }) as T
 }
 
+export type AssemblyTaskOptions = {
+  persist?: boolean
+}
+
+export type AssemblyTask = {
+  step: string,
+  fn: AnyFunction,
+  opts: AssemblyTaskOptions
+}
+
+
 export class AssemblyLine {
-  private tasks : Dictionary<AnyFunction[]> = {}
+  private tasks : AssemblyTask[] = []
 
-  public processSync(step : string, ...args: any[]) {
-    const jobs = this.tasks[step] || [];
-    const len = jobs.length;
+  public processSync(stepToRun : string, ...args: any[]) {
+    for (let i = 0; i < this.tasks.length; ++i) {
+      const { step, opts, fn } = this.tasks[i];
 
-    for (let i = 0; i < len; ++i) {
-      const job = <AnyFunction>jobs[i]
-      job(...args);
+      if (stepToRun === "*" || stepToRun === step) {
+        fn(...args);
+
+        if (!opts.persist) {
+          this.tasks.splice(i, 1);
+          i--;
+        }
+      }
     }
   }
 
-  public async processAsync(step : string, ...args: any[]) {
-    const jobs = this.tasks[step] || [];
-    const len = jobs.length;
+  public async processAsync(stepToRun : string, ...args: any[]) {
+    for (let i = 0; i < this.tasks.length; ++i) {
+      const { step, opts, fn } = this.tasks[i];
 
-    for (let i = 0; i < len; ++i) {
-      const job = <AnyFunction>jobs[i]
-      await job(...args);
+      if (stepToRun === "*" || stepToRun === step) {
+        await fn(...args);
+
+        if (!opts.persist) {
+          this.tasks.splice(i, 1);
+          i--;
+        }
+      }
     }
   }
 
-  queue(step : string, fn: AnyFunction) {
-    if (this.tasks[step]) {
-      this.tasks[step].push(fn)
-    } else {
-      this.tasks[step] = [fn]
-    }
+  queue(step : string, opts: AssemblyTaskOptions, fn: AnyFunction) {
+    this.tasks.push({ step, fn, opts })
   }
 }

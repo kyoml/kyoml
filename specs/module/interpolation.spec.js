@@ -93,17 +93,30 @@ it('interpolation can read strings set by directives', (t) => {
       key = "hi"
     }
 
-    out = "--> \${myblock.key}"
+    mycopiedblock {
+      @extend('myblock')
+    }
+
+    out = "--> \${mycopiedblock.key}"
   `, {
     directives: {
       test: ({ value, set }, key, str) => {
         set({ ...value, [key]: str})
+      },
+      extend: ({ value, get, set }, path) => {
+        set({
+          ...value,
+          ...get('document.' + path)
+        })
       }
     }
   })
 
   t.deepEqual(obj, {
     myblock: {
+      key: "value"
+    },
+    mycopiedblock: {
       key: "value"
     },
     out: "--> value"

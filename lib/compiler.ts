@@ -178,7 +178,7 @@ export function compile<T extends Json, C extends Partial<CompilerOptions>>(
 
   /** Shedules a directive to be applied to a node after the first rendering pass */
   const queueDirective = (ref: Node, ...dirs: Directive[]) : void => {
-    assembler.queue('directives', () => {
+    assembler.queue('directives', {}, () => {
       const apply = compileDirectives(ref, ...dirs);
       return apply(ref.serialize());
     });
@@ -210,8 +210,8 @@ export function compile<T extends Json, C extends Partial<CompilerOptions>>(
 
     const computable = new ComputableString(value);
 
-    assembler.queue('interpolation', (sources) => {
-      ref.replace(() => computable.compute(sources));
+    assembler.queue('interpolation', {}, () => {
+      ref.replace(() => computable.compute(getInterpolationSources()));
     });
 
     return computable;
@@ -247,7 +247,7 @@ export function compile<T extends Json, C extends Partial<CompilerOptions>>(
 
     return (input: any) => input;
   }
-  
+
   // Parse and normalize data
 
   root.document = normalizeBlock(peg(txt), tree);
@@ -256,16 +256,15 @@ export function compile<T extends Json, C extends Partial<CompilerOptions>>(
 
   if (config.async) {
     return (
-      assembler.processAsync('interpolation', getInterpolationSources())
-        .then(() => assembler.processAsync('directives', root.document))
-        .then(() => assembler.processAsync('interpolation', getInterpolationSources()))
+      assembler.processAsync('*')
+        // .then(() => assembler.processAsync('directives'))
         .then(() => root.document)
     ) as Result<T, C>
   }
 
-  assembler.processSync('interpolation', getInterpolationSources());
-  assembler.processSync('directives', root.document);
-  assembler.processSync('interpolation', getInterpolationSources());
+  assembler.processSync('*');
+  // assembler.processSync('directives', root.document);
+  // assembler.processSync('interpolation', getInterpolationSources());
 
   return root.document as Result<T, C>
 }
