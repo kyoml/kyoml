@@ -202,15 +202,19 @@ export function compile<T extends Json, C extends Partial<CompilerOptions>>(
 
   /** Transforms a ComplexString node into a ComputableString, and schedules it's processing **/
   const normalizeComplexString = (val: ComplexString, ref: Node) : ComputableString|string => {
+    const { value } = val;
+
     if (!config.interpolate) {
-      return val.value;
+      return value;
     }
 
+    const computable = new ComputableString(value);
+
     assembler.queue('interpolation', (sources) => {
-      ref.replace(str => str.compute(sources));
+      ref.replace(() => computable.compute(sources));
     });
 
-    return new ComputableString(val.value);
+    return computable;
   }
 
   /** Transforms a series of directives into a single callable function **/
@@ -253,15 +257,15 @@ export function compile<T extends Json, C extends Partial<CompilerOptions>>(
   if (config.async) {
     return (
       assembler.processAsync('interpolation', getInterpolationSources())
-        .then(() => {
-          return assembler.processAsync('directives', root.document);
-        })
+        .then(() => assembler.processAsync('directives', root.document))
+        .then(() => assembler.processAsync('interpolation', getInterpolationSources()))
         .then(() => root.document)
     ) as Result<T, C>
   }
 
   assembler.processSync('interpolation', getInterpolationSources());
   assembler.processSync('directives', root.document);
+  assembler.processSync('interpolation', getInterpolationSources());
 
   return root.document as Result<T, C>
 }

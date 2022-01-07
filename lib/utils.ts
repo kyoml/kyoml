@@ -85,18 +85,20 @@ export class AssemblyLine {
 
   public processSync(step : string, ...args: any[]) {
     const jobs = this.tasks[step] || [];
+    const len = jobs.length;
 
-    while (jobs.length > 0) {
-      const job = <AnyFunction>jobs.shift();
+    for (let i = 0; i < len; ++i) {
+      const job = <AnyFunction>jobs[i]
       job(...args);
     }
   }
 
   public async processAsync(step : string, ...args: any[]) {
     const jobs = this.tasks[step] || [];
+    const len = jobs.length;
 
-    while (jobs.length > 0) {
-      const job = <AnyFunction>jobs.shift();
+    for (let i = 0; i < len; ++i) {
+      const job = <AnyFunction>jobs[i]
       await job(...args);
     }
   }

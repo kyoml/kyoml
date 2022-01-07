@@ -83,3 +83,29 @@ it('interpolation is supported in directive arguments', (t) => {
     c: 'hello world'
   })
 })
+
+
+it('interpolation can read strings set by directives', (t) => {
+  const obj = compile(`
+    myblock {
+      @test("key", "value")
+
+      key = "hi"
+    }
+
+    out = "--> \${myblock.key}"
+  `, {
+    directives: {
+      test: ({ value, set }, key, str) => {
+        set({ ...value, [key]: str})
+      }
+    }
+  })
+
+  t.deepEqual(obj, {
+    myblock: {
+      key: "value"
+    },
+    out: "--> value"
+  })
+})
